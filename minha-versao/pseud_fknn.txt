@@ -1,0 +1,19 @@
+BEGIN
+    Input x, of unknown classification.
+    Set K, 1 <= K <= n.
+    Initialize i = 1.
+    DO UNTIL (k-nearest neighbors to x found)
+        Compute distance from x to Xi.
+        IF (i <= K) THEN
+            Include JC, in the set of k-nearest neighbors
+        ELSE IF (Xi closer to x than any previous nearest neighbor) THEN
+            Delete the farthest of the k-nearest neighbors
+            Include Xi in the set of k-nearest neighbors.
+        END IF
+    END DO UNTIL
+    Initialize i = 1.
+    DO UNTIL (x assigned membership in all classes)
+        Compute Ui(x) using (1).
+        Increment i.
+    END DO UNTIL
+END 

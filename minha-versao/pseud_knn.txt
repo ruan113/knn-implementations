@@ -1,0 +1,28 @@
+BEGIN
+    Input y, of unknown classification.
+    Set K, (1 <= k <= n).
+    Initialize i = 1.
+    DO UNTIL (k-nearest neighbors found)
+        Compute distance from y to Xi.
+        IF (i <= K) THEN
+            Include x, in the set of k-nearest neighbors
+        ELSE IF (Xi is closer to y than any previous nearest
+        neighbor) THEN
+            Delete farthest in the set of k-nearest neighbors
+            Include x, in the set of k-nearest neighbors.
+        END IF
+        Increment i
+    END DO UNTIL
+    Determine the majority class represented in the set of K-nearest neighbors.
+    IF (a tie exists) THEN
+        Compute sum of distances of neighbors in each class
+        which tied.
+    IF (no tie occurs) THEN
+        Classify y in the class of minimum sum
+    ELSE
+        Classify y in the class of last minimum found.
+    END IF
+    ELSE
+        Classify y in the majority class.
+    END IF
+END 
