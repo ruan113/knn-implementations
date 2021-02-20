@@ -1,12 +1,13 @@
 import operator
-
+import numpy as np
+import pandas as pd
+import operator
 import numpy as np
 import pandas as pd
 import matplotlib.pyplot as plt
 
 from sklearn.metrics import accuracy_score
 from sklearn.base import BaseEstimator, ClassifierMixin
-
 
 class FuzzyKNN(BaseEstimator, ClassifierMixin):
 	def __init__(self, k=3, plot=False):
@@ -22,16 +23,24 @@ class FuzzyKNN(BaseEstimator, ClassifierMixin):
 		self.xdim = len(self.X[0])
 		self.n = len(y)
 
+		# list(set(y)) -> remove valores iguais deixando somente uma classe de cada
 		classes = list(set(y))
 		classes.sort()
 		self.classes = classes
 
+		# transforma dados em um data frame (matriz)
 		self.df = pd.DataFrame(self.X)
-		self.df['y'] = self.y
+		self.df['y'] = self.y # adiciona a classe do dado na coluna y
+
+		# print('-------------------')
+		# print(len(y))
+		# print(self.classes)
 
 		self.memberships = self._compute_memberships()
 
+		# adiciona uma coluna com o objeto { 'identificador_da_classe': grau_de_filiação }
 		self.df['membership'] = self.memberships
+		# print(self.df)
 
 		self.fitted_ = True
 		return self
@@ -62,7 +71,7 @@ class FuzzyKNN(BaseEstimator, ClassifierMixin):
 						vote = num/den
 						neighbors_votes.append(vote)
 					votes[c] = np.sum(neighbors_votes)
-				print(votes)
+				# print(votes)
 				pred = max(votes.items(), key=operator.itemgetter(1))[0]
 				y_pred.append((pred, votes))
 
@@ -70,34 +79,36 @@ class FuzzyKNN(BaseEstimator, ClassifierMixin):
 
 
 	def score(self, X, y):
-		print('oi')
+		# pprint('oi')
 		if self.fitted_ == None:
 			raise Exception('score() called before fit()')
 		else:
 			predictions = self.predict(X)
 			y_pred = [t[0] for t in predictions]
+			# print(y_pred)
 			confidences = [t[1] for t in predictions]
 
 			return accuracy_score(y_pred=y_pred, y_true=y)
 
 
 	def _find_k_nearest_neighbors(self, df, x):
-		X = df.iloc[:,0:self.xdim].values
+		X = df.iloc[:, 0:self.xdim].values
 
 		df['distances'] = [np.linalg.norm(X[i] - x) for i in range(self.n)]
 
 		df.sort_values(by='distances', ascending=True, inplace=True)
 		neighbors = df.iloc[0:self.k]
-
+		# print(df.iloc[0:self.k])
 		return neighbors
 
 
 	def _get_counts(self, neighbors):
 		groups = neighbors.groupby('y')
-		counts = {group[1]['y'].iloc[0]:group[1].count()[0] for group in groups}
-
+		# counts = {group[1]['y'].iloc[0]:group[1].count()[0] for group in groups}
+		counts = {}	
+		for group in groups:
+			counts[group[1]['y'].iloc[0]] = group[1].count()[0]
 		return counts
-
 
 	def _compute_memberships(self):
 		memberships = []
@@ -107,7 +118,7 @@ class FuzzyKNN(BaseEstimator, ClassifierMixin):
 
 			neighbors = self._find_k_nearest_neighbors(pd.DataFrame.copy(self.df), x)
 			counts = self._get_counts(neighbors)
-
+			
 			membership = dict()
 			for c in self.classes:
 				try:
@@ -132,35 +143,3 @@ class FuzzyKNN(BaseEstimator, ClassifierMixin):
 
 		if type(self.plot) != bool:
 			raise Exception('"plot" should have type bool')
-
-
-import pprint
-import operator
-
-import numpy as np
-import pandas as pd
-import matplotlib.pyplot as plt
-
-from sklearn.model_selection import train_test_split, cross_val_score
-from sklearn.datasets import load_iris, load_breast_cancer
-from sklearn.metrics import accuracy_score
-from sklearn.neighbors import KNeighborsClassifier
-from sklearn.base import BaseEstimator, ClassifierMixin
-
-iris = load_iris()
-breast = load_breast_cancer()
-dataset = breast
-
-X = dataset.data
-y = dataset.target
-
-xTrain, xTest, yTrain, yTest = train_test_split(X,y)
-
-skModel = KNeighborsClassifier()
-custModel = FuzzyKNN()
-
-skModel.fit(xTrain, yTrain)
-custModel.fit(xTrain, yTrain)
-
-print(cross_val_score(cv=5, estimator=skModel, X=xTest, y=yTest))
-print(cross_val_score(cv=5, estimator=custModel, X=xTest, y=yTest))
