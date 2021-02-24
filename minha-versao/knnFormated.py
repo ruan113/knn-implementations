@@ -42,7 +42,6 @@ class CrispyKNN(BaseEstimator, ClassifierMixin):
 
     self.memberships = self._compute_memberships()
     self.df['membership'] = self.memberships
-    # print(self.df)
     self.fitted_ = True
     return self
 
@@ -54,30 +53,25 @@ class CrispyKNN(BaseEstimator, ClassifierMixin):
       y_pred = []
 
       for x in X:
+        # Acha os k vizinhos mais próximos
         neighbors = self._find_k_nearest_neighbors(pd.DataFrame.copy(self.df), x)
+        # Pega a quantidade de classes
         counts = self._get_counts(neighbors)
-
-        votes = {}
-        mostCommon = 0
-        neighbors_votes = []
+        
         for c in self.classes:
           try:
-            if(mostCommon <= counts[c]):
-              mostCommon = counts[c]
-              vote = c
-              neighbors_votes.append(vote)
+            if(type(counts[c]) == int or type(counts[c]) == float):
+              pass
           except:
-            pass
+            counts[c] = 0
 
-        votes[c] = np.sum(neighbors_votes)
-        pred = max(votes.items(), key=operator.itemgetter(1))[0]
-        y_pred.append((pred, votes))
+        pred = max(counts.items(), key=operator.itemgetter(1))[0]
+        y_pred.append((pred, counts))
 
       return y_pred
 
 
   def score(self, X, y):
-    # pprint('oi')
     if self.fitted_ == None:
       raise Exception('score() called before fit()')
     else:
@@ -85,7 +79,6 @@ class CrispyKNN(BaseEstimator, ClassifierMixin):
         predictions = self.predict(X)
         y_pred = [t[0] for t in predictions]
         confidences = [t[1] for t in predictions]
-
         return accuracy_score(y_pred=y_pred, y_true=y)
       except:
         print('Fail to score!')
