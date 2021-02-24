@@ -1,4 +1,3 @@
-import operator
 import numpy as np
 import pandas as pd
 import operator
@@ -32,15 +31,10 @@ class FuzzyKNN(BaseEstimator, ClassifierMixin):
 		self.df = pd.DataFrame(self.X)
 		self.df['y'] = self.y # adiciona a classe do dado na coluna y
 
-		# print('-------------------')
-		# print(len(y))
-		# print(self.classes)
-
 		self.memberships = self._compute_memberships()
 
 		# adiciona uma coluna com o objeto { 'identificador_da_classe': grau_de_filiação }
 		self.df['membership'] = self.memberships
-		# print(self.df)
 
 		self.fitted_ = True
 		return self
@@ -71,24 +65,23 @@ class FuzzyKNN(BaseEstimator, ClassifierMixin):
 						vote = num/den
 						neighbors_votes.append(vote)
 					votes[c] = np.sum(neighbors_votes)
-				# print(votes)
+					
 				pred = max(votes.items(), key=operator.itemgetter(1))[0]
 				y_pred.append((pred, votes))
-
 			return y_pred
 
 
 	def score(self, X, y):
-		# pprint('oi')
 		if self.fitted_ == None:
 			raise Exception('score() called before fit()')
 		else:
-			predictions = self.predict(X)
-			y_pred = [t[0] for t in predictions]
-			# print(y_pred)
-			confidences = [t[1] for t in predictions]
-
-			return accuracy_score(y_pred=y_pred, y_true=y)
+			try:
+				predictions = self.predict(X)
+				y_pred = [t[0] for t in predictions]
+				confidences = [t[1] for t in predictions]
+				return accuracy_score(y_pred=y_pred, y_true=y)
+			except:
+				print('Fail to score!')
 
 
 	def _find_k_nearest_neighbors(self, df, x):
@@ -98,7 +91,6 @@ class FuzzyKNN(BaseEstimator, ClassifierMixin):
 
 		df.sort_values(by='distances', ascending=True, inplace=True)
 		neighbors = df.iloc[0:self.k]
-		# print(df.iloc[0:self.k])
 		return neighbors
 
 
