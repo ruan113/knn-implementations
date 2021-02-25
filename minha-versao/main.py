@@ -3,21 +3,32 @@ from knnFormated import CrispyKNN
 from knnFuzzy_anotherversion import FuzzyKNN
 from pprint import pprint
 from sklearn.model_selection import train_test_split, cross_val_score
-from sklearn.datasets import load_iris, load_breast_cancer
-from sklearn.neighbors import KNeighborsClassifier
+from sklearn.datasets import load_iris, load_breast_cancer, load_diabetes
 
-iris = load_iris()
-breast = load_breast_cancer()
-dataset = iris
+from utils import loadDataset
 
-X = dataset.data
-y = dataset.target
+# iris = load_iris()
+# breast = load_breast_cancer()
+# diabetes = load_diabetes()
+# dataset = diabetes
+
+dataset = loadDataset('minha-versao/data-sets/adult-data-set/adult_full.data')
+
+X = dataset["data"]
+y = dataset["target"]
+
+# print(type(y[0]))
+
+# print(X)
+# print(y)
+
 xTrain, xTest, yTrain, yTest = train_test_split(X,y)
 
-
+# Passar valor como parametro caso queira valor de k diferente de 3
 skModel = CrispyKNN()
 custModel = FuzzyKNN()
 
+# Inicializa instâncias de treino
 skModel.fit(xTrain, yTrain)
 custModel.fit(xTrain, yTrain)
 
