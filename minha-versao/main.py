@@ -1,28 +1,23 @@
 # from knnCrispy import CrispyKNN
 from knnFormated import CrispyKNN
-from knnFuzzy_anotherversion import FuzzyKNN
+from knnFuzzyFormated import FuzzyKNN
 from pprint import pprint
 from sklearn.model_selection import train_test_split, cross_val_score
 from sklearn.datasets import load_iris, load_breast_cancer, load_diabetes
 
-from utils import loadDataset
+from utils import getData
 
 # iris = load_iris()
 # breast = load_breast_cancer()
 # diabetes = load_diabetes()
 # dataset = diabetes
 
-dataset = loadDataset('minha-versao/data-sets/adult-data-set/adult_full.data')
+dataset = getData('minha-versao/data-sets/adult-data-set/adult_1k.data' , 0.75)
 
-X = dataset["data"]
-y = dataset["target"]
-
-# print(type(y[0]))
-
-# print(X)
-# print(y)
-
-xTrain, xTest, yTrain, yTest = train_test_split(X,y)
+xTrain = dataset['training']['data']
+yTrain = dataset['training']['target']
+xTest = dataset['test']['data']
+yTest = dataset['test']['target']
 
 # Passar valor como parametro caso queira valor de k diferente de 3
 skModel = CrispyKNN()
@@ -42,7 +37,7 @@ except:
 # porcentagem = 0.85 # porcentagem de dados que será usada como instancia de treinamento
 # k = 3 # num de vizinhos que serão considerados
 
-# knn('minha-versao/datasets/iris-data-set/iris_full.data', porcentagem, 5, k)
-# knn('minha-versao/datasets/adult-data-set/adult_1k.data', porcentagem, 14, k)
-# knn('minha-versao/datasets/adult-data-set/adult_5k.data', porcentagem, 14, k)
-# knn('minha-versao/datasets/adult-data-set/adult_10k.data', porcentagem, 14, k)
+# knn('minha-versao/data-sets/iris-data-set/iris_full.data', porcentagem, 5, k)
+# knn('minha-versao/data-sets/adult-data-set/adult_1k.data', porcentagem, 14, k)
+# knn('minha-versao/data-sets/adult-data-set/adult_5k.data', porcentagem, 14, k)
+# knn('minha-versao/data-sets/adult-data-set/adult_10k.data', porcentagem, 14, k)
