@@ -1,5 +1,6 @@
 import csv
 import numpy as np
+import random
 
 def loadDataset(filename):
     with open(filename, 'rt', encoding="utf8") as csvfile:
@@ -25,6 +26,8 @@ def splitData(dataset, percentage):
     trainingSet = []
     testSet = []
     maxTrainData = int(len(dataset) * percentage)
+    dataset = list(dataset)
+    random.shuffle(dataset)
     
     for n in range(0, len(dataset)):
         if n < maxTrainData:
