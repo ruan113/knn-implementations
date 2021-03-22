@@ -36,6 +36,7 @@ def splitData(dataset, percentage):
             testSet.append(dataset[n])
             
     return {
+        "complete": formatData(dataset),
         "training": formatData(trainingSet),
         "test": formatData(testSet),
     }
@@ -45,4 +46,11 @@ def splitData(dataset, percentage):
 def getData(fileName, splitPerc):
     dataset = loadDataset(fileName)
     return splitData(dataset, splitPerc)
+
+def getClasses(y):
+    classes = list(set(y))
+    classes.sort()
+    return classes
+
+# def formatConfusionMatrix(dataframe, classes): 
     
