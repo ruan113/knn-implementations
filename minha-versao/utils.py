@@ -10,15 +10,15 @@ def loadDataset(filename):
     
 def formatData(data):
     target = []
-        
+    formatedData = []
     for it in data:
+        formatedData.append(it[:-1])
         target.append(it[-1])
-        del it[-1]
         
-    data = np.array(data).astype(np.float)
+    formatedData = np.array(formatedData).astype(np.float)
     target = np.array(target).astype(np.float)
     return {
-        "data": data,
+        "data": formatedData,
         "target": target,
     }
         
