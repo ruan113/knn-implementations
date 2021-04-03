@@ -23,6 +23,7 @@ class CrispyKNN(BaseEstimator, ClassifierMixin):
   def __init__(self, k=3, plot=False):
 	  self.k = k
 	  self.plot = plot
+	  self.name = 'KNN'
     
     
   def fit(self, X, y=None):

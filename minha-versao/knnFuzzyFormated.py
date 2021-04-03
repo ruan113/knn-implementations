@@ -14,7 +14,7 @@ class FuzzyKNN(BaseEstimator, ClassifierMixin):
 	def __init__(self, k=3, plot=False):
 		self.k = k
 		self.plot = plot
-
+		self.name = 'Fuzzy KNN'
 
 	def fit(self, X, y=None):
 		self._check_params(X,y)
@@ -59,6 +59,9 @@ class FuzzyKNN(BaseEstimator, ClassifierMixin):
 					den = 0
 					for n in range(self.k):
 						dist = np.linalg.norm(x - neighbors.iloc[n,0:self.xdim])
+						# pdb.set_trace()
+						# if(dist ** (2 / (m-1)) == 0):
+							# pdb.set_trace()
 						den += 1 / (dist ** (2 / (m-1)))
 
 					neighbors_votes = []
@@ -66,7 +69,11 @@ class FuzzyKNN(BaseEstimator, ClassifierMixin):
 						dist = np.linalg.norm(x - neighbors.iloc[n,0:self.xdim])
 						num = (neighbors.iloc[n].membership[c]) / (dist ** (2 / (m-1)))
 
+						# if(den != 0):
 						vote = num/den
+						# else:
+						# 	pdb.set_trace()
+
 						neighbors_votes.append(vote)
 					votes[c] = np.sum(neighbors_votes)
 					
