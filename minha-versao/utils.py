@@ -57,7 +57,7 @@ def splitData(dataset, percentage):
 
 # Get file data and set it into a dataset, formated and splited between train and test sets
 # - splitPerc: percentage of training data, it's between 0.75, 0.8, or 0.9
-def getData(fileName, splitPerc):
+def getData(fileName, splitPerc = 0.75):
     dataset = loadDataset(fileName)
     return splitData(dataset, splitPerc)
 
@@ -99,8 +99,13 @@ def calculateSummary(confusionMatrix):
         print('Erro ao calcular o summary')
         raise
 
-    
 def formatPercentage(value):
     value *= 100
     value = '{0:.3g}'.format(value)
     return value
+
+def getNumClasses(y):
+    classes = list(set(y))
+    classes.sort()
+    return len(classes)
+
