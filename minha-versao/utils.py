@@ -74,7 +74,7 @@ def formatConfusionMatrix(dataframe, classes):
         print('Erro ao formatar matrix de confusão')
         raise
         
-def calculateSummary(confusionMatrix):
+def calculateSummary(confusionMatrix, output_dict=False):
     try:
         columnsLength = len(confusionMatrix[0])
         correctlyClassified = 0

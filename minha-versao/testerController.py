@@ -33,6 +33,14 @@ class TesterController():
         list(self.yTest), 
         predictions, 
         labels = self.classes,
+        zero_division=0,
+        output_dict=True
+      )
+      
+      metricsString = classification_report(
+        list(self.yTest), 
+        predictions, 
+        labels = self.classes,
         zero_division=0
       )
 
@@ -47,7 +55,10 @@ class TesterController():
         'name': model.name,
         'runTime': str(datetime.timedelta(seconds=runTime)),
         'metrics': metrics,
+        'metricsString': metricsString,
         'confusionMatrix': confusionMatrix,
+        'summary': calculateSummary(confusionMatrix, True),
+        'summaryString': calculateSummary(confusionMatrix, False),
         'error': None
       }
     except:
