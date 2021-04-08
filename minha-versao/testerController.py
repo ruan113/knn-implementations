@@ -8,8 +8,8 @@ import pdb
 import datetime
 
 class TesterController():
-  def __init__(self, dataPath, k = 3, testPerc = 0.75):
-    self.k = k
+  def __init__(self, dataPath, kValues = [3], testPerc = 0.75):
+    self.kValues = kValues
     self.initializeData(dataPath, testPerc)
     
   def initializeData(self, dataPath, testPerc):
@@ -70,41 +70,49 @@ class TesterController():
     
   def generateReport(self, reportData):
     report = ''
-    print(f'Gerando reports no index {self.index}...')
+    k = reportData["k"]
+    print(f'Gerando reports no index {self.index} com k = {k}...')
     for key in reportData:
-      name = reportData[key]["name"]
-      runTime = reportData[key]['runTime']
-      confusionMatrix = reportData[key]['confusionMatrix']
-      metrics = reportData[key]['metrics']
-      error = reportData[key]['error']
+      if(key != "k"):
+        name = reportData[key]["name"]
+        runTime = reportData[key]['runTime']
+        confusionMatrix = reportData[key]['confusionMatrix']
+        metrics = reportData[key]['metricsString']
+        error = reportData[key]['error']
 
-      report += f'-------------------------- {name} --------------------------\n'
+        report += f'-------------------------- {name} (k = {k}) --------------------------\n'
 
-      if(error is not None):
-        report += f"{error}\n"
-      else:
-        report += f'Execution Time: {runTime} seconds\n'
-        report += calculateSummary(confusionMatrix)
-        report += '\n'
-        report += f'{metrics}\n'
-        report += '\n'
-        report += 'matriz de confunsão\n'
-        confusionMatrix = formatConfusionMatrix(confusionMatrix,self.classes)
-        report += f'{confusionMatrix}\n'
+        if(error is not None):
+          report += f"{error}\n"
+        else:
+          report += f'Execution Time: {runTime} seconds\n'
+          report += calculateSummary(confusionMatrix)
+          report += '\n'
+          report += f'{metrics}\n'
+          report += '\n'
+          report += 'matriz de confunsão\n'
+          confusionMatrix = formatConfusionMatrix(confusionMatrix,self.classes)
+          report += f'{confusionMatrix}\n'
       
     return report
     
   def run(self, executionIndex):
     self.index = executionIndex
-    crispyModel = CrispyKNN(self.k)
-    fuzzyModel = FuzzyKNN(self.k)
-        
+    reports = ""
+    
     try:
-      report = {
-        "crispyReport": self.execModel(crispyModel),
-        "fuzzyReport": self.execModel(fuzzyModel)
-      }
+      for k in self.kValues:
+        crispyModel = CrispyKNN(k)
+        fuzzyModel = FuzzyKNN(k)
+          
+        report = {
+          "k": k,
+          "crispyReport": self.execModel(crispyModel),
+          "fuzzyReport": self.execModel(fuzzyModel)
+        }
+        
+        reports += self.generateReport(report)
       
-      return self.generateReport(report)
+      return reports
     except:
       print(f'Houve um erro durante a execução do index "{executionIndex}"')
