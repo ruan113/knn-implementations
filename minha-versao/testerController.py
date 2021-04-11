@@ -1,8 +1,10 @@
-from utils import getData, getClasses, calculateSummary, formatConfusionMatrix
+from utils import getData, getClasses, calculateSummary, formatConfusionMatrix, formatMetrics
 from knnFormated import CrispyKNN
 from knnFuzzyFormated import FuzzyKNN
-from sklearn.metrics import confusion_matrix, classification_report
+from sklearn.metrics import confusion_matrix, classification_report, precision_recall_fscore_support
+from sklearn.model_selection import train_test_split
 
+import pandas as pd
 import time
 import pdb
 import datetime
@@ -10,6 +12,8 @@ import datetime
 class TesterController():
   def __init__(self, dataPath, kValues = [3], testPerc = 0.75):
     self.kValues = kValues
+    self.fileName = dataPath.split("/")[-1]
+    self.dataPath = dataPath
     self.initializeData(dataPath, testPerc)
     
   def initializeData(self, dataPath, testPerc):
@@ -32,11 +36,10 @@ class TesterController():
       metrics = classification_report(
         list(self.yTest), 
         predictions, 
-        labels = self.classes,
         zero_division=0,
+        labels = self.classes,
         output_dict=True
       )
-      
       metricsString = classification_report(
         list(self.yTest), 
         predictions, 
@@ -49,16 +52,18 @@ class TesterController():
         predictions, 
         labels=self.classes
       )
-        
       print(f'classificação do index {self.index} - {model.name} finalizada!')
       return {
         'name': model.name,
         'runTime': str(datetime.timedelta(seconds=runTime)),
-        'metrics': metrics,
-        'metricsString': metricsString,
         'confusionMatrix': confusionMatrix,
+        # Brute Data
+        'metrics': metrics,
         'summary': calculateSummary(confusionMatrix, True),
+        # String report
+        'metricsString': metricsString,
         'summaryString': calculateSummary(confusionMatrix, False),
+        # Errors
         'error': None
       }
     except:
@@ -75,6 +80,7 @@ class TesterController():
     for key in reportData:
       if(key != "k"):
         name = reportData[key]["name"]
+        summary = reportData[key]['summaryString']
         runTime = reportData[key]['runTime']
         confusionMatrix = reportData[key]['confusionMatrix']
         metrics = reportData[key]['metricsString']
@@ -86,7 +92,7 @@ class TesterController():
           report += f"{error}\n"
         else:
           report += f'Execution Time: {runTime} seconds\n'
-          report += calculateSummary(confusionMatrix)
+          report += summary
           report += '\n'
           report += f'{metrics}\n'
           report += '\n'

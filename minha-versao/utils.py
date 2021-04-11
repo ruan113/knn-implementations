@@ -89,12 +89,20 @@ def calculateSummary(confusionMatrix, output_dict=False):
                     
         correctlyClassifiedRate = correctlyClassified/(correctlyClassified + incorrectlyClassified)
         incorrectlyClassifiedRate = incorrectlyClassified/(incorrectlyClassified + correctlyClassified)
-    
+
         result = ''
-        result += f'Correctly Classified: {correctlyClassified}\t{formatPercentage(correctlyClassifiedRate)}%\n'
-        result += f'Incorrectly Classified: {incorrectlyClassified}\t{formatPercentage(incorrectlyClassifiedRate)}%\n'
-        result += f'Total Number Of Instances: {correctlyClassified + incorrectlyClassified}\n'
+        if(output_dict == False):
+            result += f'Correctly Classified: {correctlyClassified}\t{formatPercentage(correctlyClassifiedRate)}%\n'
+            result += f'Incorrectly Classified: {incorrectlyClassified}\t{formatPercentage(incorrectlyClassifiedRate)}%\n'
+            result += f'Total Number Of Instances: {correctlyClassified + incorrectlyClassified}\n'
+        else: 
+            result = {
+                'correctlyClassified': correctlyClassified,
+                'incorrectlyClassified': incorrectlyClassified
+            }
+        
         return result
+        
     except:
         print('Erro ao calcular o summary')
         raise
@@ -109,3 +117,18 @@ def getNumClasses(y):
     classes.sort()
     return len(classes)
 
+def formatMetrics(metrics, hideFields=[
+    'micro avg',
+    'macro avg',
+    'weighted  avg',
+]):
+    result = list()
+    
+    for key in metrics:
+        aux = list()
+        if(key in hideFields):
+            for field in metrics[key]:
+                aux.append(field)
+            result.append(aux)
+            
+    return result
