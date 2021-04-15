@@ -4,17 +4,8 @@ import datetime
 from testerController import TesterController
 
 # Values of K that will be used when classificating
-kValues=[
-  3,
-  5,
-  7,
-  9,
-  11,
-  13,
-  15,
-  17,
-  19,
-]
+# kValues= list(np.arange(1, 25))
+kValues= range(1, 11)
 
 runTime = 0
 try:
@@ -37,7 +28,7 @@ try:
   for path in execList:
     print(f'Começando execução do index {index}...')
     report += f'{index} - {path.split("/")[-1]}:\n'
-    report += TesterController(path, kValues=kValues).run(index)
+    report += TesterController(path, kValues=kValues).run('score-kvalue')
     report += '--------------------------------------------\n'
     print(f'Execução do index {index} finalizada!')
     index += 1

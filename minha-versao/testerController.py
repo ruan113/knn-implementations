@@ -1,33 +1,40 @@
-from utils import getData, getClasses, calculateSummary, formatConfusionMatrix, formatMetrics
+from utils import getData, getClasses, calculateSummary, formatConfusionMatrix, generateCSV
 from knnFormated import CrispyKNN
 from knnFuzzyFormated import FuzzyKNN
+
 from sklearn.metrics import confusion_matrix, classification_report, precision_recall_fscore_support
 from sklearn.model_selection import train_test_split
+from sklearn.model_selection import GridSearchCV
 
+import numpy as np
 import pandas as pd
 import time
 import pdb
 import datetime
 
 class TesterController():
-  def __init__(self, dataPath, kValues = [3], testPerc = 0.75):
+  def __init__(self, dataPath, kValues = [3], trainPerc = 0.75):
     self.kValues = kValues
     self.fileName = dataPath.split("/")[-1]
     self.dataPath = dataPath
-    self.initializeData(dataPath, testPerc)
+    self.initializeData(dataPath, trainPerc)
     
-  def initializeData(self, dataPath, testPerc):
-    self.dataset = getData(dataPath , testPerc)
+  def initializeData(self, dataPath, trainPerc):
+    self.dataset = getData(dataPath , trainPerc)
+    self.X = self.dataset['complete']['data']
+    self.y = self.dataset['complete']['target']
+    
     self.xTrain = self.dataset['training']['data']
     self.yTrain = self.dataset['training']['target']
     self.xTest = self.dataset['test']['data']
     self.yTest = self.dataset['test']['target']
+    
     self.classes = getClasses(self.dataset['complete']['target'])
     
   def execModel(self, model):
-    print(f'Começando classificação do index {self.index} - {model.name}...')
-
-    try: 
+    print(f'Começando classificação do dataset {self.fileName} - {model.name}...')
+    
+    try:       
       runTime = time.time()
       model.fit(self.xTrain, self.yTrain)
       predictions = [t[0] for t in model.predict(self.xTest)]
@@ -52,7 +59,7 @@ class TesterController():
         predictions, 
         labels=self.classes
       )
-      print(f'classificação do index {self.index} - {model.name} finalizada!')
+      print(f'classificação do fileName {self.fileName} - {model.name} finalizada!')
       return {
         'name': model.name,
         'runTime': str(datetime.timedelta(seconds=runTime)),
@@ -69,14 +76,14 @@ class TesterController():
     except:
       return {
         'name': model.name,
-        'error': f'Error while execModel using {self.index} - {model.name}'
+        'error': f'Error while execModel using {self.fileName} - {model.name}'
       }
       
     
   def generateReport(self, reportData):
     report = ''
     k = reportData["k"]
-    print(f'Gerando reports no index {self.index} com k = {k}...')
+    print(f'Gerando reports no fileName {self.fileName} com k = {k}...')
     for key in reportData:
       if(key != "k"):
         name = reportData[key]["name"]
@@ -100,25 +107,62 @@ class TesterController():
           confusionMatrix = formatConfusionMatrix(confusionMatrix,self.classes)
           report += f'{confusionMatrix}\n'
       
-    return report
-    
-  def run(self, executionIndex):
-    self.index = executionIndex
+    return report 
+  
+  def getAllInfo(self):
     reports = ""
-    
+      
     try:
       for k in self.kValues:
         crispyModel = CrispyKNN(k)
         fuzzyModel = FuzzyKNN(k)
-          
+            
         report = {
           "k": k,
           "crispyReport": self.execModel(crispyModel),
           "fuzzyReport": self.execModel(fuzzyModel)
         }
-        
+          
         reports += self.generateReport(report)
-      
+        
       return reports
     except:
-      print(f'Houve um erro durante a execução do index "{executionIndex}"')
+      print(f'Houve um erro durante a execução do fileName "{self.fileName}"')
+    
+  def getScoreKValue(self):
+    reports = "KNN,,FKNN,\n"
+        
+    try:
+      for k in self.kValues:
+        crispyModel = CrispyKNN(k)
+        fuzzyModel = FuzzyKNN(k)
+    
+        crispyModel.fit(self.xTrain, self.yTrain)
+        fuzzyModel.fit(self.xTrain, self.yTrain)
+        
+        crispyScore = crispyModel.score(self.X, self.y)
+        fuzzyScore = fuzzyModel.score(self.X, self.y)
+        
+        reports += f'{crispyScore},{k},{fuzzyScore},{k}\n'
+    
+      generateCSV(f'scoreKvalues-{self.fileName}', reports)
+      return reports
+    except:
+      print(f'Houve um erro durante a execução do fileName "{self.fileName}"')
+    
+  def handleExecution(self, executionType):
+    if (executionType == 'all'):
+      return self.getAllInfo()
+    else: 
+      if (executionType == 'score-kvalue'):
+        return self.getScoreKValue()
+    
+    return None
+    
+  def run(self, executionType = 'all'):
+    report = self.handleExecution(executionType)
+    
+    if (report != None): 
+      return report
+    else:
+      return ''
