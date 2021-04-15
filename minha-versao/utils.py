@@ -132,3 +132,42 @@ def formatMetrics(metrics, hideFields=[
             result.append(aux)
             
     return result
+
+    
+def generateCSV(fileName, data):
+    try:
+        print('Iniando geração de csv!')
+        f = open(f"minha-versao/results/{fileName}.csv", "w")
+        f.write(data)
+        f.close()
+    except:
+        print(f'Falha ao tentar gerar arquivo csv - {fileName}')
+
+def generateAllInfoCsv(fileName, bruteData):
+    print('gerando csv...')
+    csvString = "Dataset, K, Method, Acertos, Erros, precision, recall, f1-score, support\n"
+
+    i = 2
+    for report in bruteData:
+        for key in report:
+            if(key != "k"):
+                k = report["k"]
+                name = report[key]["name"]
+                summary = report[key]['summary']
+                acertos = summary['correctlyClassified']
+                erros = summary['incorrectlyClassified'] 
+                metrics = report[key]['metrics']
+                precision = metrics['precision']
+                recall = metrics['recall']
+                f1Score = metrics['f1-score']
+                support = metrics['support']
+                if(i == 2):
+                    csvString += f"{fileName}, {k}, {name}, {acertos}, {erros}, {precision}, {recall}, {f1Score}, {support}\n"
+                else:
+                    if(i % 2 == 0):
+                        csvString += f", {k}, {name}, {acertos}, {erros}, {precision}, {recall}, {f1Score}, {support}\n"
+                    else: 
+                        csvString += f",, {name}, {acertos}, {erros}, {precision}, {recall}, {f1Score}, {support}\n"
+        i += 1    
+
+    return csvString  
