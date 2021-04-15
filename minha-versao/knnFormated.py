@@ -1,3 +1,4 @@
+import pdb
 import numpy as np
 import pandas as pd
 import operator
@@ -24,8 +25,7 @@ class CrispyKNN(BaseEstimator, ClassifierMixin):
 	  self.k = k
 	  self.plot = plot
 	  self.name = 'KNN'
-    
-    
+   
   def fit(self, X, y=None):
     self._check_params(X,y)
     self.X = X
@@ -125,7 +125,7 @@ class CrispyKNN(BaseEstimator, ClassifierMixin):
 
 
   def _check_params(self, X, y):
-    if type(self.k) != int:
+    if not(type(self.k) == int or type(self.k) == np.int32):
       raise Exception('"k" should have type int')
     if self.k >= len(y):
       raise Exception('"k" should be less than no of feature sets')
