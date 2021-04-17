@@ -41,8 +41,6 @@ class CrispyKNN(BaseEstimator, ClassifierMixin):
     self.df = pd.DataFrame(self.X)
     self.df['y'] = self.y
 
-    self.memberships = self._compute_memberships()
-    self.df['membership'] = self.memberships
     self.fitted_ = True
     return self
 
@@ -59,12 +57,12 @@ class CrispyKNN(BaseEstimator, ClassifierMixin):
         # Pega a quantidade de classes
         counts = self._get_counts(neighbors)
         
-        for c in self.classes:
-          try:
-            if(type(counts[c]) == int or type(counts[c]) == float):
-              pass
-          except:
-            counts[c] = 0
+        # for c in self.classes:
+        #   try:
+        #     if(type(counts[c]) == int or type(counts[c]) == float):
+        #       pass
+        #   except:
+        #     counts[c] = 0
 
         pred = max(counts.items(), key=operator.itemgetter(1))[0]
         y_pred.append((pred, counts))
