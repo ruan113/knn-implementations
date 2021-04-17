@@ -140,8 +140,8 @@ class TesterController():
         crispyModel.fit(self.xTrain, self.yTrain)
         fuzzyModel.fit(self.xTrain, self.yTrain)
         
-        crispyScore = crispyModel.score(self.X, self.y)
-        fuzzyScore = fuzzyModel.score(self.X, self.y)
+        crispyScore = crispyModel.score(self.xTest, self.yTest)
+        fuzzyScore = fuzzyModel.score(self.xTest, self.yTest)
         
         reports += f'{crispyScore},{k},{fuzzyScore},{k}\n'
     
