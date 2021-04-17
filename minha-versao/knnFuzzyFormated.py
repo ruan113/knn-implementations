@@ -1,9 +1,9 @@
 import numpy as np
 import pandas as pd
 import operator
-import numpy as np
 import pandas as pd
 import matplotlib.pyplot as plt
+import math
 
 from sklearn.metrics import accuracy_score
 from sklearn.base import BaseEstimator, ClassifierMixin
@@ -44,12 +44,12 @@ class FuzzyKNN(BaseEstimator, ClassifierMixin):
 
 	def predict(self, X):
 		if self.fitted_ == None:
-			raise Exception('predict() called before fit()')
+				raise Exception('predict() called before fit()')
 		else:
 			m = 2
 			y_pred = []
 
-			# Para cada item de teste
+			# Para cada dado de teste
 			for x in X:
 				neighbors = self._find_k_nearest_neighbors(pd.DataFrame.copy(self.df), x)
 				# print(neighbors)
@@ -57,30 +57,25 @@ class FuzzyKNN(BaseEstimator, ClassifierMixin):
 				# Para cada classe, calcule o voto
 				for c in self.classes:
 					den = 0
-					for n in range(self.k):
-						dist = np.linalg.norm(x - neighbors.iloc[n,0:self.xdim])
-						# pdb.set_trace()
-						# if(dist ** (2 / (m-1)) == 0):
-							# pdb.set_trace()
-						den += 1 / (dist ** (2 / (m-1)))
+					num = 0
+						
+					for j in range(self.k):
+							dist = neighbors['distances'].iloc[j]
+							if dist != 0:
+									den += 1 / (dist**(2/(m-1)))
+									num += (neighbors.iloc[j].membership[c] * 1) / (dist**(2/(m-1)))
+							else:
+									num = neighbors.iloc[j].membership[c]
+									den = 1
+									break
+						
+					vote = num/den
+					votes[c] = vote
 
-					neighbors_votes = []
-					for n in range(self.k):
-						dist = np.linalg.norm(x - neighbors.iloc[n,0:self.xdim])
-						num = (neighbors.iloc[n].membership[c]) / (dist ** (2 / (m-1)))
-
-						# if(den != 0):
-						vote = num/den
-						# else:
-						# 	pdb.set_trace()
-
-						neighbors_votes.append(vote)
-					votes[c] = np.sum(neighbors_votes)
-					
 				pred = max(votes.items(), key=operator.itemgetter(1))[0]
 				y_pred.append((pred, votes))
+				
 			return y_pred
-
 
 	def score(self, X, y):
 		if self.fitted_ == None:
