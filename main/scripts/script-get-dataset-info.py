@@ -2,15 +2,15 @@ from utils import getData, getNumClasses
 import pandas as pd
 
 datasetList = [
-  'minha-versao/data-sets/iris-data-set/iris_full.data',
-  'minha-versao/data-sets/adult-data-set/adult_full.data',
-  'minha-versao/data-sets/winequality-data-set/winequality-red.data',
-  'minha-versao/data-sets/winequality-data-set/winequality-white.data',
-  'minha-versao/data-sets/bankmarketing-data-set/normal/formatted-bank.data',
-  'minha-versao/data-sets/bankmarketing-data-set/additional/formatted-bank.data',
-  'minha-versao/data-sets/abalone-data-set/formatted-abalone.data',
-  'minha-versao/data-sets/student-performance-data-set/formatted-student-mat.data',
-  'minha-versao/data-sets/student-performance-data-set/formatted-student-por.data',
+  'main/data-sets/iris-data-set/iris_full.data',
+  'main/data-sets/adult-data-set/adult_full.data',
+  'main/data-sets/winequality-data-set/winequality-red.data',
+  'main/data-sets/winequality-data-set/winequality-white.data',
+  'main/data-sets/bankmarketing-data-set/normal/formatted-bank.data',
+  'main/data-sets/bankmarketing-data-set/additional/formatted-bank.data',
+  'main/data-sets/abalone-data-set/formatted-abalone.data',
+  'main/data-sets/student-performance-data-set/formatted-student-mat.data',
+  'main/data-sets/student-performance-data-set/formatted-student-por.data',
 ]
 
 df = pd.DataFrame(list()) 
