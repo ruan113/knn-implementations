@@ -3,7 +3,7 @@ from knnFormated import CrispyKNN
 from knnFuzzyFormated import FuzzyKNN
 
 from sklearn.metrics import confusion_matrix, classification_report, precision_recall_fscore_support
-from sklearn.model_selection import train_test_split
+from sklearn.model_selection import cross_val_score
 from sklearn.model_selection import GridSearchCV
 
 import numpy as np
@@ -137,13 +137,19 @@ class TesterController():
         crispyModel = CrispyKNN(k)
         fuzzyModel = FuzzyKNN(k)
     
-        crispyModel.fit(self.xTrain, self.yTrain)
-        fuzzyModel.fit(self.xTrain, self.yTrain)
+        # crispyModel.fit(self.xTrain, self.yTrain)
+        # fuzzyModel.fit(self.xTrain, self.yTrain)
         
-        crispyScore = crispyModel.score(self.xTest, self.yTest)
-        fuzzyScore = fuzzyModel.score(self.xTest, self.yTest)
+        # crispyScore = crispyModel.score(self.xTest, self.yTest)
+        # fuzzyScore = fuzzyModel.score(self.xTest, self.yTest)]
         
-        reports += f'{crispyScore},{k},{fuzzyScore},{k}\n'
+        cv_scores = cross_val_score(crispyModel, self.X, self.y, cv=5)
+        fcv_scores = cross_val_score(fuzzyModel, self.X, self.y, cv=5)
+        
+        print(cv_scores)
+        print(fcv_scores)
+        
+        reports += f'{np.mean(cv_scores)},{k},{np.mean(fcv_scores)},{k}\n'
     
       generateCSV(f'scoreKvalues-{self.fileName}', reports)
       return reports

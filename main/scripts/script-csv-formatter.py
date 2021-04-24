@@ -1,7 +1,7 @@
 import pdb
 from pprint import pprint
 
-from utils import loadDataset
+from main.utils import loadDataset
 
 # Descrição: Este script transformará todos os valores não numéricos de uma matriz em valores numéricos#
 #
