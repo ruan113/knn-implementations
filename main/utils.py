@@ -135,9 +135,10 @@ def formatMetrics(metrics, hideFields=[
 
     
 def generateCSV(fileName, data):
+    fileName = fileName.replace('.data', '')
     try:
         print('Iniando geração de csv!')
-        f = open(f"minha-versao/results/{fileName}.csv", "w")
+        f = open(f"main/results/{fileName}.csv", "w")
         f.write(data)
         f.close()
     except:

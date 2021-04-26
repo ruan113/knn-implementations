@@ -1,11 +1,11 @@
 import time
 import datetime
 
-from controllers.testerController import TesterController
+from testerController import TesterController
 
 # Values of K that will be used when classificating
 # kValues= list(np.arange(1, 25))
-kValues= range(1, 25)
+kValues= range(1, 3)
 
 runTime = 0
 try:

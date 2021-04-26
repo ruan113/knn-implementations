@@ -3,7 +3,7 @@ from knnFormated import CrispyKNN
 from knnFuzzyFormated import FuzzyKNN
 
 from sklearn.metrics import confusion_matrix, classification_report, precision_recall_fscore_support
-from sklearn.model_selection import cross_val_score
+from sklearn.model_selection import cross_val_score, cross_validate
 from sklearn.model_selection import GridSearchCV
 
 import numpy as np
@@ -143,18 +143,44 @@ class TesterController():
         # crispyScore = crispyModel.score(self.xTest, self.yTest)
         # fuzzyScore = fuzzyModel.score(self.xTest, self.yTest)]
         
-        cv_scores = cross_val_score(crispyModel, self.X, self.y, cv=5)
-        fcv_scores = cross_val_score(fuzzyModel, self.X, self.y, cv=5)
-        
-        print(cv_scores)
-        print(fcv_scores)
-        
-        reports += f'{np.mean(cv_scores)},{k},{np.mean(fcv_scores)},{k}\n'
+        # cv_scores = cross_val_score(crispyModel, self.X, self.y, cv=5)
+        # fcv_scores = cross_val_score(fuzzyModel, self.X, self.y, cv=5)
+        # print('------INICIO------')
+
+        # print(cross_val_score(crispyModel, self.X, self.y, cv=5))
+        # print(cross_val_score(fuzzyModel, self.X, self.y, cv=5))
+        # print('---------------')
+        # print(cross_validate(crispyModel, self.X, self.y, cv=5)['test_score'])
+        # print(cross_validate(fuzzyModel, self.X, self.y, cv=5)['test_score'])
+
+        cvScores = cross_validate(crispyModel, self.X, self.y, cv=5)
+        fcvScores = cross_validate(fuzzyModel, self.X, self.y, cv=5)
+
+        scores = self.getBestValues(cvScores)
+        fscores = self.getBestValues(fcvScores)
+
+        reports += f'{k},{scores["score"]},{scores["time"]},{fscores["score"]},{fscores["time"]}\n'
     
       generateCSV(f'scoreKvalues-{self.fileName}', reports)
       return reports
     except:
       print(f'Houve um erro durante a execução do fileName "{self.fileName}"')
+    
+  def getBestValues(self, result):
+    bestScore = 0
+    bestTime = 0
+    
+    i = 0
+    for it in result['test_score']:
+      if (bestScore < it):
+        bestScore = it
+        bestTime = result['score_time'][i]
+        i += 1
+          
+    return {
+      'score': bestScore,
+      'time': bestTime
+    }
     
   def handleExecution(self, executionType):
     if (executionType == 'all'):
