@@ -133,34 +133,32 @@ class TesterController():
     reports = "KNN,,FKNN,\n"
         
     try:
+      bestKnnScore = 0;
+      bestKnnKValue = 0;
+      bestFKnnScore = 0;
+      bestFKnnKValue = 0;
       for k in self.kValues:
         crispyModel = CrispyKNN(k)
         fuzzyModel = FuzzyKNN(k)
-    
-        # crispyModel.fit(self.xTrain, self.yTrain)
-        # fuzzyModel.fit(self.xTrain, self.yTrain)
-        
-        # crispyScore = crispyModel.score(self.xTest, self.yTest)
-        # fuzzyScore = fuzzyModel.score(self.xTest, self.yTest)]
-        
-        # cv_scores = cross_val_score(crispyModel, self.X, self.y, cv=5)
-        # fcv_scores = cross_val_score(fuzzyModel, self.X, self.y, cv=5)
-        # print('------INICIO------')
-
-        # print(cross_val_score(crispyModel, self.X, self.y, cv=5))
-        # print(cross_val_score(fuzzyModel, self.X, self.y, cv=5))
-        # print('---------------')
-        # print(cross_validate(crispyModel, self.X, self.y, cv=5)['test_score'])
-        # print(cross_validate(fuzzyModel, self.X, self.y, cv=5)['test_score'])
 
         cvScores = cross_validate(crispyModel, self.X, self.y, cv=5)
         fcvScores = cross_validate(fuzzyModel, self.X, self.y, cv=5)
 
         scores = self.getBestValues(cvScores)
         fscores = self.getBestValues(fcvScores)
+        
+        if(bestKnnScore < scores['score']):
+          bestKnnScore = scores['score']
+          bestKnnKValue = k
+        if(bestFKnnScore < fscores['score']):
+          bestFKnnScore = fscores['score']
+          bestFKnnKValue = k
 
         reports += f'{k},{scores["score"]},{scores["time"]},{fscores["score"]},{fscores["time"]}\n'
     
+      reports += ",\n"
+      reports += f"'Knn - Best K: ',{bestKnnKValue}\n"
+      reports += f"'FKnn - Best K: ',{bestFKnnKValue}\n"
       generateCSV(f'scoreKvalues-{self.fileName}', reports)
       return reports
     except:
