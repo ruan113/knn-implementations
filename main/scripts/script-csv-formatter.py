@@ -1,7 +1,7 @@
 import pdb
 from pprint import pprint
 
-from main.utils import loadDataset
+from utils import loadDataset
 
 # Descrição: Este script transformará todos os valores não numéricos de uma matriz em valores numéricos#
 #
@@ -67,7 +67,7 @@ def arrayToString(data):
 
 def run():
   # Mudar path para o arquivo desejado 
-  path = 'minha-versao/data-sets/student-performance-data-set/student-por.data'
+  path = 'main/data-sets/cs-go-data-set/csgo_round.csv'
   aux = path.split('/')
   aux.pop(-1)
   relativePath = '/'.join(aux) + '/'

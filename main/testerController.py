@@ -141,7 +141,9 @@ class TesterController():
         crispyModel = CrispyKNN(k)
         fuzzyModel = FuzzyKNN(k)
 
+        print('Começando cross_validate KNN...');
         cvScores = cross_validate(crispyModel, self.X, self.y, cv=5)
+        print('Começando cross_validate FKNN...');
         fcvScores = cross_validate(fuzzyModel, self.X, self.y, cv=5)
 
         scores = self.getBestValues(cvScores)
