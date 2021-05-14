@@ -162,6 +162,7 @@ class TesterController():
       reports += f"'Knn - Best K: ',{bestKnnKValue}\n"
       reports += f"'FKnn - Best K: ',{bestFKnnKValue}\n"
       generateCSV(f'scoreKvalues-{self.fileName}', reports)
+      print(f'scoreKvalues-{self.fileName}-sucesso...');
       return reports
     except:
       print(f'Houve um erro durante a execução do fileName "{self.fileName}"')
