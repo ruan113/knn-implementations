@@ -2,8 +2,6 @@ import numpy as np
 import pandas as pd
 import operator
 import pandas as pd
-import matplotlib.pyplot as plt
-import math
 
 from sklearn.metrics import accuracy_score
 from sklearn.base import BaseEstimator, ClassifierMixin

@@ -4,7 +4,6 @@ import pandas as pd
 import operator
 import numpy as np
 import pandas as pd
-import matplotlib.pyplot as plt
 
 from sklearn.metrics import accuracy_score
 from sklearn.base import BaseEstimator, ClassifierMixin
