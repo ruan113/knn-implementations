@@ -1,4 +1,4 @@
-from utils import getData, getClasses, calculateSummary, formatConfusionMatrix, generateCSV
+from utils import getData, getClasses, calculateSummary, formatConfusionMatrix, generateCSV, getCSVInfo
 from knnFormated import CrispyKNN
 from knnFuzzyFormated import FuzzyKNN
 
@@ -131,38 +131,34 @@ class TesterController():
     
   def getScoreKValue(self):
     reports = "KNN,,FKNN,\n"
+    csvName = f'scoreKvalues-{self.fileName}'
+    reportInfo = getCSVInfo(csvName)
+    
+    if (len(reportInfo['kValues']) == 0):
+      generateCSV(csvName, reports, 'a')
         
     try:
-      bestKnnScore = 0;
-      bestKnnKValue = 0;
-      bestFKnnScore = 0;
-      bestFKnnKValue = 0;
       for k in self.kValues:
-        crispyModel = CrispyKNN(k)
-        fuzzyModel = FuzzyKNN(k)
+        if(k in reportInfo['kValues']):
+          pass
+        else:   
+          print(f'classificando {self.fileName} utilizando k = {k}')
+          crispyModel = CrispyKNN(k)
+          fuzzyModel = FuzzyKNN(k)
 
-        print('Começando cross_validate KNN...');
-        cvScores = cross_validate(crispyModel, self.X, self.y, cv=5)
-        print('Começando cross_validate FKNN...');
-        fcvScores = cross_validate(fuzzyModel, self.X, self.y, cv=5)
+          print('Começando cross_validate KNN...');
+          cvScores = cross_validate(crispyModel, self.X, self.y, cv=5)
+          print('Começando cross_validate FKNN...');
+          fcvScores = cross_validate(fuzzyModel, self.X, self.y, cv=5)
 
-        scores = self.getBestValues(cvScores)
-        fscores = self.getBestValues(fcvScores)
-        
-        if(bestKnnScore < scores['score']):
-          bestKnnScore = scores['score']
-          bestKnnKValue = k
-        if(bestFKnnScore < fscores['score']):
-          bestFKnnScore = fscores['score']
-          bestFKnnKValue = k
+          scores = self.getBestValues(cvScores)
+          fscores = self.getBestValues(fcvScores)
 
-        reports += f'{k},{scores["score"]},{scores["time"]},{fscores["score"]},{fscores["time"]}\n'
-    
-      reports += ",\n"
-      reports += f"'Knn - Best K: ',{bestKnnKValue}\n"
-      reports += f"'FKnn - Best K: ',{bestFKnnKValue}\n"
-      generateCSV(f'scoreKvalues-{self.fileName}', reports)
-      print(f'scoreKvalues-{self.fileName}-sucesso...');
+          row = f'{k},{scores["score"]},{scores["time"]},{fscores["score"]},{fscores["time"]}\n'
+          generateCSV(csvName, row, 'a')
+          reports += row
+      
+      print(f'{csvName}-sucesso...');
       return reports
     except:
       print(f'Houve um erro durante a execução do fileName "{self.fileName}"')

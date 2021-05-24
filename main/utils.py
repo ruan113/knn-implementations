@@ -133,12 +133,51 @@ def formatMetrics(metrics, hideFields=[
             
     return result
 
+def getBestKValue(): 
+    bestKnnScore = 0;
+    bestKnnKValue = 0;
+    bestFKnnScore = 0;
+    bestFKnnKValue = 0;
     
-def generateCSV(fileName, data):
+    if(bestKnnScore < scores['score']):
+        bestKnnScore = scores['score']
+        bestKnnKValue = k
+    if(bestFKnnScore < fscores['score']):
+        bestFKnnScore = fscores['score']
+        bestFKnnKValue = k
+        
+    reports += ",\n"
+    reports += f"'Knn - Best K: ',{bestKnnKValue}\n"
+    reports += f"'FKnn - Best K: ',{bestFKnnKValue}\n"
+
+def getCSVInfo(fileName):
+    fileName = fileName.replace('.data', '')
+    data = {
+        'kValues': []
+    }
+    
+    try:
+        f = open(f"main/results/{fileName}.csv", 'r')
+        lines = f.readlines()
+        
+        i = 0
+        for line in lines:
+            if(i != 0):
+                info = line.split(',')
+                data['kValues'].append(int(info[0]))
+            i += 1
+            
+        f.close()
+    except:
+        print('houve um erro ao buscar informações do csv')
+    
+    return data
+    
+def generateCSV(fileName, data, mode='w'):
     fileName = fileName.replace('.data', '')
     try:
         print('Iniando geração de csv!')
-        f = open(f"main/results/{fileName}.csv", "w")
+        f = open(f"main/results/{fileName}.csv", mode)
         f.write(data)
         f.close()
     except:
