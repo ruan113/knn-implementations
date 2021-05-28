@@ -130,7 +130,7 @@ class TesterController():
       print(f'Houve um erro durante a execução do fileName "{self.fileName}"')
     
   def getScoreKValue(self):
-    reports = "KNN,,FKNN,\n"
+    reports = ",KNN,,,FKNN,,\n" + "k,Avg Score,Best Score,Time,Avg Score,Best Score,Time\n"
     csvName = f'scoreKvalues-{self.fileName}'
     reportInfo = getCSVInfo(csvName)
     
@@ -154,7 +154,7 @@ class TesterController():
           scores = self.getBestValues(cvScores)
           fscores = self.getBestValues(fcvScores)
 
-          row = f'{k},{scores["score"]},{scores["time"]},{fscores["score"]},{fscores["time"]}\n'
+          row = f'{k},{scores["avgScore"]},{scores["bestScore"]},{scores["time"]},{fscores["avgScore"]},{fscores["bestScore"]},{fscores["time"]}\n'
           generateCSV(csvName, row, 'a')
           reports += row
       
@@ -175,8 +175,9 @@ class TesterController():
         i += 1
           
     return {
-      'score': bestScore,
-      'time': bestTime
+      'avgScore': np.mean(result['test_score']),
+      'bestScore': bestScore,
+      'time': bestTime,
     }
     
   def handleExecution(self, executionType):

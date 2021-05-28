@@ -162,7 +162,7 @@ def getCSVInfo(fileName):
         
         i = 0
         for line in lines:
-            if(i != 0):
+            if(i > 1):
                 info = line.split(',')
                 data['kValues'].append(int(info[0]))
             i += 1
