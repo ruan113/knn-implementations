@@ -171,7 +171,7 @@ class TesterController():
     for it in result['test_score']:
       if (bestScore < it):
         bestScore = it
-        bestTime = result['score_time'][i]
+        bestTime = result['fit_time'][i] + result['score_time'][i]
         i += 1
           
     return {
