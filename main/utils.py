@@ -133,23 +133,6 @@ def formatMetrics(metrics, hideFields=[
             
     return result
 
-def getBestKValue(): 
-    bestKnnScore = 0;
-    bestKnnKValue = 0;
-    bestFKnnScore = 0;
-    bestFKnnKValue = 0;
-    
-    if(bestKnnScore < scores['score']):
-        bestKnnScore = scores['score']
-        bestKnnKValue = k
-    if(bestFKnnScore < fscores['score']):
-        bestFKnnScore = fscores['score']
-        bestFKnnKValue = k
-        
-    reports += ",\n"
-    reports += f"'Knn - Best K: ',{bestKnnKValue}\n"
-    reports += f"'FKnn - Best K: ',{bestFKnnKValue}\n"
-
 def getCSVInfo(fileName):
     fileName = fileName.replace('.data', '')
     data = {
